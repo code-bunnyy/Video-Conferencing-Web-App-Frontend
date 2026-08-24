@@ -2,29 +2,39 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 
+import cameraStore from '@/zustand-stores/cameraStore';
+
 import { FiMic, FiMicOff, FiVideo, FiVideoOff } from "react-icons/fi";
 import { IoVolumeHigh, IoVolumeMute } from "react-icons/io5";
+
+import InputOutputOptionCameraPreviewSection from './InputOutputOptionCameraPreviewSection';
+
+import { cameraPermissionStatusEffect } from '@/utils/camera-utils/cameraPermissionStatusEffect';
+import { cameraStatusEffect } from '@/utils/camera-utils/cameraStatusEffect';
+import { selectedCameraIdEffect } from '@/utils/camera-utils/selectedCameraIdEffect';
+import { permissionManager } from '@/utils/camera-utils/permissionManager';
+import { cameraStatusOptions } from '@/utils/camera-utils/cameraStatusOptions';
 
 import CameraOrAvatar from './CameraOrAvatar';
 import CameraSelector from './CameraSelector';
 
-const cameraStatusOptions = {
-    turningOn: "turning_on",
-    on: "on",
-    off: "off",
-}
+
 
 export default function CameraPreviewSection({ className }) {
 
     const videoRef = useRef(null);
-    const [stream, setStream] = useState(null);
-    const [cameraStatus, setCameraStatus] = useState(cameraStatusOptions.off);
-    const [cameras, setCameras] = useState([]);
-    const [selectedCameraId, setSelectedCameraId] = useState(null);
 
+    const cameraStream = cameraStore((state) => state.cameraStream);
 
-    const [cameraPermissionStatus, setCameraPermissionStatus] = useState("prompt");
-    const [micPermissionStatus, setMicPermissionStatus] = useState("prompt");
+    const cameraStatus = cameraStore((state) => state.cameraStatus);
+    const setCameraStatus = cameraStore((state) => state.setCameraStatus);
+
+    const cameras = cameraStore((state) => state.cameras);
+
+    const selectedCameraId = cameraStore((state) => state.selectedCameraId);
+    const setSelectedCameraId = cameraStore((state) => state.setSelectedCameraId);
+
+    const cameraPermissionStatus = cameraStore((state) => state.cameraPermissionStatus);
 
     const userData = {
         email: "akhilendraojha@gmail.com",
@@ -32,155 +42,19 @@ export default function CameraPreviewSection({ className }) {
     }
 
 
-    useEffect(() => {
-        let cameraPermission, microphonePermission;
+    useEffect(() => permissionManager(), []);
 
-        navigator.permissions.query({ name: "camera" })
-            .then((result) => {
-                cameraPermission = result;
-                setCameraPermissionStatus(result.state);
-                result.onchange = () => {
-                    setCameraPermissionStatus(result.state);
-                    if (result.state !== "granted") {
-                        stream?.getVideoTracks().forEach((track) => track.stop());
-                        setStream(null);
-                        setCameraStatus(cameraStatusOptions.off);
-                    }
-                }
-            })
-            .catch((error) => console.error("Camera permission query failed: ", error));
+    useEffect(() => { cameraPermissionStatusEffect() }, [cameraPermissionStatus]);
 
-        navigator.permissions.query({ name: "microphone" })
-            .then((result) => {
-                microphonePermission = result;
-                setMicPermissionStatus(result.state);
+    useEffect(() => selectedCameraIdEffect(videoRef), [selectedCameraId]);
 
-                result.onchange = () => {
-                    setMicPermissionStatus(result.state);
-                    if (result.state === "denied") {
-                        stream?.getAudioTracks().forEach((track) => track.stop());
-                    }
-                }
-            })
-            .catch((error) => console.error("Mic permission query failed: ", error));
-
-        return () => {
-            if (cameraPermission) cameraPermission.onchange = null;
-            if (microphonePermission) microphonePermission.onchange = null;
-        }
-    }, []);
+    useEffect(() => cameraStatusEffect(videoRef), [cameraStatus]);
 
     useEffect(() => {
-        if (cameraPermissionStatus === "granted") {
-            navigator.mediaDevices.enumerateDevices().then((devices) => {
-                const videoInputs = devices.filter((d) => d.kind === "videoinput");
-                setCameras(videoInputs);
-                if (!selectedCameraId && videoInputs[0]) {
-                    setSelectedCameraId(videoInputs[0].deviceId);
-                }
-            });
+        if (cameraStatus === cameraStatusOptions.on && cameraStream && videoRef.current) {
+            videoRef.current.srcObject = cameraStream;
         }
-    }, [cameraPermissionStatus]);
-
-
-    const resetCameraProperties = () => {
-        videoRef.current = null;
-        setStream(null);
-        setCameraStatus(cameraStatusOptions.off);
-        setCameras([]);
-        selectedCameraId(null);
-    }
-
-    async function getCameraStream() {
-        try {
-            const initialStreams = await navigator.mediaDevices.getUserMedia({ video: true });
-            const devices = await navigator.mediaDevices.enumerateDevices();
-            const videoInputs = devices.filter((d) => d.kind === "videoinput");
-
-            if (videoInputs.length <= 0) {
-                resetCameraProperties();
-                return;
-            }
-
-            setCameras(videoInputs);
-
-            const actualDeviceId = initialStreams.getVideoTracks()[0]?.getSettings().deviceId;
-
-
-            const selectedCamera = videoInputs.find((c) => c.deviceId === selectedCameraId);
-
-            const selectedCameraIdToBeSet = selectedCamera ? selectedCamera.deviceId
-                : (actualDeviceId || videoInputs[0].deviceId);
-
-            console.log("selectedCameraIdToBeSet: ", selectedCameraIdToBeSet);
-            if (selectedCameraIdToBeSet) {
-                let selectedStream = await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        deviceId: { exact: selectedCameraIdToBeSet },
-                        width: { ideal: 1920 },
-                        height: { ideal: 1080 },
-                        frameRate: { ideal: 30 },
-                    }
-                });
-
-                setCameraStatus(cameraStatusOptions.on);
-                setStream(selectedStream);
-                setSelectedCameraId(selectedCameraIdToBeSet);
-            }
-
-            initialStreams.getTracks().forEach((track) => track.stop());
-        }
-        catch (error) {
-            console.error("some error occured while fetching video media: ", error);
-            setStream(null);
-            setCameraStatus(cameraStatusOptions.off);
-        }
-    }
-
-    useEffect(() => {
-        function handleDeviceChange() {
-            navigator.mediaDevices.enumerateDevices().then((devices) => {
-                const videoInputs = devices.filter((d) => d.kind === "videoinput");
-                setCameras(videoInputs);
-
-                const stillExists = videoInputs.find((d) => d.deviceId === selectedCameraId);
-
-                if (!stillExists) {
-                    getCameraStream();
-                }
-            })
-        }
-
-        navigator.mediaDevices.addEventListener("devicechange", handleDeviceChange);
-
-        return () => {
-            navigator.mediaDevices.removeEventListener("devicechange", handleDeviceChange);
-        }
-    }, [selectedCameraId]);
-
-    useEffect(() => {
-
-        if (cameraStatus === cameraStatusOptions.turningOn) {
-            getCameraStream();
-        }
-
-
-        if (cameraStatus === cameraStatusOptions.off) {
-            stream?.getTracks().forEach((track) => track.stop());
-            setStream(null);
-        }
-
-        return () => {
-            stream?.getTracks().forEach((track) => track.stop());
-        }
-    }, [cameraStatus]);
-
-
-    useEffect(() => {
-        if (cameraStatus === cameraStatusOptions.on && stream && videoRef.current) {
-            videoRef.current.srcObject = stream;
-        }
-    }, [cameraStatus, stream]);
+    }, [cameraStatus, cameraStream]);
 
 
     const handleCameraIconClick = () => {
@@ -204,7 +78,7 @@ export default function CameraPreviewSection({ className }) {
         >
             <CameraOrAvatar
                 userData={userData}
-                stream={stream}
+                cameraStream={cameraStream}
                 videoRef={videoRef}
                 cameraStatus={cameraStatus}
             />
@@ -261,31 +135,3 @@ export default function CameraPreviewSection({ className }) {
         </div>
     )
 }
-
-
-
-function InputOutputOptionCameraPreviewSection({ className,
-    onClick,
-    buttonEnabled = false,
-    iconScaleClass,
-    EnabledIcon,
-    DisabledIcon }) {
-
-    return (
-        <div className={`${className} flex items-center justify-center h-12 rounded-[1000rem] aspect-square cursor-pointer
-                         ${buttonEnabled ? "bg-gray-700" : "bg-red-600"}`}
-            onClick={onClick}
-        >
-            {buttonEnabled ? (<EnabledIcon className={iconScaleClass} />)
-                : (<DisabledIcon className={iconScaleClass} />)}
-        </div>
-    )
-}
-
-
-
-
-
-
-
-

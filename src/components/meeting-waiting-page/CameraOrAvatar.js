@@ -14,7 +14,7 @@ const cameraStatusOptions = {
 }
 
 
-export default function CameraOrAvatar({ cameraStatus, stream, videoRef, userData }) {
+export default function CameraOrAvatar({ cameraStatus, cameraStream, videoRef, userData }) {
     if (cameraStatus === "turning_on") {
         return (
             <div className='w-full h-full flex items-center justify-center bg-[#1d1d21] text-white'>
@@ -23,7 +23,7 @@ export default function CameraOrAvatar({ cameraStatus, stream, videoRef, userDat
         );
     }
 
-    if(cameraStatus === cameraStatusOptions.on && stream) {
+    if(cameraStatus === cameraStatusOptions.on && cameraStream) {
         return (
             <div 
                 className='w-full h-full'
