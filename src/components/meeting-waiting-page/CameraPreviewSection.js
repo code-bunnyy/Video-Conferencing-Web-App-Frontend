@@ -92,21 +92,6 @@ export default function CameraPreviewSection({ className }) {
                         onSelect={handleCameraSelect}
                         cameraPermissionStatus={cameraPermissionStatus}
                     />
-                    <CameraSelector
-                        selectorUniqueName={"camera-selector-number-2"}
-                        cameras={cameras}
-                        selectedCameraId={selectedCameraId}
-                        onSelect={handleCameraSelect}
-                        cameraPermissionStatus={cameraPermissionStatus}
-                    />
-
-                    <CameraSelector
-                        selectorUniqueName={"camera-selector-number-3"}
-                        cameras={cameras}
-                        selectedCameraId={selectedCameraId}
-                        onSelect={handleCameraSelect}
-                        cameraPermissionStatus={cameraPermissionStatus}
-                    />
                 </div>
 
                 <div className='absolute bottom-0 flex items-center justify-between w-full px-0 py-3'>
