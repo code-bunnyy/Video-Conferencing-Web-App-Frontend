@@ -8,15 +8,15 @@ const cameraStore = create((set) => ({
     selectedCameraId: null, 
     cameraPermissionStatus: "prompt", 
 
-    setCameras: (newCamerasList) => set(() => ({ cameras: newCamerasList })),
+    setCameras: (newCamerasList) => set({ cameras: newCamerasList }),
 
-    setCameraStream: (newCameraStream) => set(() => ({ cameraStream: newCameraStream })),
+    setCameraStream: (newCameraStream) => set({ cameraStream: newCameraStream }),
 
-    setCameraStatus: (newStatus) => set(() => ({ cameraStatus: newStatus })),
+    setCameraStatus: (newStatus) => set({ cameraStatus: newStatus }),
 
-    setSelectedCameraId: (newCameraId) => set(() => ({ selectedCameraId: newCameraId })),
+    setSelectedCameraId: (newCameraId) => set({ selectedCameraId: newCameraId }),
 
-    setCameraPermissionStatus: (newPermissionStatus) => set(() => ({ cameraPermissionStatus: newPermissionStatus })),
+    setCameraPermissionStatus: (newPermissionStatus) => set({ cameraPermissionStatus: newPermissionStatus }),
 }));
 
 

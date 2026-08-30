@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 import cameraStore from '@/zustand-stores/cameraStore';
+import micStore from '@/zustand-stores/micStore';
 
 import { FiMic, FiMicOff, FiVideo, FiVideoOff } from "react-icons/fi";
 import { IoVolumeHigh, IoVolumeMute } from "react-icons/io5";
@@ -12,16 +13,23 @@ import InputOutputOptionCameraPreviewSection from './InputOutputOptionCameraPrev
 import { cameraPermissionStatusEffect } from '@/utils/camera-utils/cameraPermissionStatusEffect';
 import { cameraStatusEffect } from '@/utils/camera-utils/cameraStatusEffect';
 import { selectedCameraIdEffect } from '@/utils/camera-utils/selectedCameraIdEffect';
-import { permissionManager } from '@/utils/camera-utils/permissionManager';
+import { cameraPermissionManager } from '@/utils/camera-utils/cameraPermissionManager';
 import { cameraStatusOptions } from '@/utils/camera-utils/cameraStatusOptions';
+
+import { micPermissionManager } from '@/utils/mic-utils/micPermissionManager';
+import { micPermissionStatusEffect } from '@/utils/mic-utils/micPermissionStatusEffect';
+import { selectedMicIdEffect } from '@/utils/mic-utils/selectedMicIdEffect';
+import { micStatusEffect } from '@/utils/mic-utils/micStatusEffect';
+import { micStatusOptions } from '@/utils/mic-utils/micStatusOptions';
+
 
 import CameraOrAvatar from './CameraOrAvatar';
 import CameraSelector from './CameraSelector';
 
 
-
 export default function CameraPreviewSection({ className }) {
 
+    //===============================================================================================
     const videoRef = useRef(null);
 
     const cameraStream = cameraStore((state) => state.cameraStream);
@@ -36,13 +44,35 @@ export default function CameraPreviewSection({ className }) {
 
     const cameraPermissionStatus = cameraStore((state) => state.cameraPermissionStatus);
 
+    //================================================================================================
+    
+    const audioRef = useRef(null);
+
+    const micStream = micStore((state) => state.micStream);
+    const setMicStream = micStore((state) => state.setMicStream);
+
+    const mics = micStore((state) => state.mics);
+    const setMics = micStore((state) => state.setMics);
+
+    const micStatus = micStore((state) => state.micStatus);
+    const setMicStatus = micStore((state) => state.setMicStatus);
+
+    const selectedMicId = micStore((state) => state.selectedMicId);
+    const setSelectedMicId = micStore((state) => state.setSelectedMicId);
+
+    const micPermissionStatus = micStore((state) => state.micPermissionStatus);
+    const setMicPermissionStatus = micStore((state) => state.setMicPermissionStatus);
+
+    //================================================================================================
+
     const userData = {
         email: "akhilendraojha@gmail.com",
         name: "Akhilendra Ojha",
     }
 
-
-    useEffect(() => permissionManager(), []);
+    //================================================================================================
+    
+    useEffect(() => cameraPermissionManager(), []);
 
     useEffect(() => { cameraPermissionStatusEffect() }, [cameraPermissionStatus]);
 
@@ -56,6 +86,24 @@ export default function CameraPreviewSection({ className }) {
         }
     }, [cameraStatus, cameraStream]);
 
+    //================================================================================================
+
+    useEffect(() => micPermissionManager(), []);
+
+    useEffect(() => { micPermissionStatusEffect() }, [micPermissionStatus]);
+
+    useEffect(() => selectedMicIdEffect(audioRef), [selectedMicId]);
+
+    useEffect(() => micStatusEffect(audioRef), [micStatus]);
+
+    useEffect(() => {
+        if(micStatus === micStatusOptions.on && micStream && audioRef.current) {
+            audioRef.current.srcObject = micStream;
+        }
+    }, [micStatus, micStream]);
+
+
+    //================================================================================================
 
     const handleCameraIconClick = () => {
         if (cameraStatus === cameraStatusOptions.off) {
@@ -70,6 +118,24 @@ export default function CameraPreviewSection({ className }) {
             setCameraStatus(cameraStatusOptions.turningOn);
         }
     }
+
+    //================================================================================================
+
+    const handleMicIconClick = () => {
+        if(micStatus === micStatusOptions.off) {
+            setMicStatus(micStatusOptions.turningOn);
+        }
+        else setMicStatus(micStatusOptions.off);
+    }
+
+    const handleMicSelect = (deviceId) => {
+        setSelectedMicId(deviceId);
+        if(micStatus === micStatusOptions.on) {
+            setMicStatus(micStatusOptions.turningOn);
+        }
+    }
+
+    //================================================================================================
 
     return (
         <div className={`${className} relative w-full aspect-video overflow-hidden

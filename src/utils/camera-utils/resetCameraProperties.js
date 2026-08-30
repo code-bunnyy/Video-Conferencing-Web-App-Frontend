@@ -1,13 +1,14 @@
-const cameraStatusOptions = {
-    turningOn: "turning_on",
-    on: "on",
-    off: "off",
-}
+import { cameraStatusOptions } from "./cameraStatusOptions";
 
 export const resetCameraProperties = (
-    videoRef, setCameraStream, setCameraStatus, setCameras, setSelectedCameraId) => {
+    videoRef, setCameraStream, setCameraStatus, setCameras, setSelectedCameraId
+) => {
 
-    videoRef.current = null;
+    if(videoRef?.current) {
+        videoRef.current.srcObject = null;
+        videoRef.current = null;
+    }
+    
     setCameraStream(null);
     setCameraStatus(cameraStatusOptions.off);
     setCameras([]);

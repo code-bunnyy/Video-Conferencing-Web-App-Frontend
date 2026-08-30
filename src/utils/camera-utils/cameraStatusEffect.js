@@ -15,11 +15,11 @@ export const cameraStatusEffect = (videoRef = null) => {
     }
 
     if (cameraStatus === cameraStatusOptions.off) {
-        cameraStream?.getTracks().forEach((track) => track.stop());
+        cameraStream?.getTracks()?.forEach((track) => track.stop());
         setCameraStream(null);
     }
 
     return () => {
-        cameraStream?.getTracks().forEach((track) => track.stop());
+        cameraStream?.getTracks()?.forEach((track) => track.stop());
     }
 }

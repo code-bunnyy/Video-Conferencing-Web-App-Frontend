@@ -22,7 +22,7 @@ export const selectedCameraIdEffect = (videoRef = null) => {
             }
         }
         catch (error) {
-            console.log("Error occurred while handling device change:", error);
+            console.log("Error occurred while handling device (camera) change: ", error);
         }
     }
 

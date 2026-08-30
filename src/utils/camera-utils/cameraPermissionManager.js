@@ -1,12 +1,11 @@
 import cameraStore from "@/zustand-stores/cameraStore";
 import { cameraStatusOptions } from "./cameraStatusOptions";
 
-export const permissionManager = () => {
+export const cameraPermissionManager = () => {
     let cameraPermission;
 
     const {
         setCameraPermissionStatus,
-        cameraStream,
         setCameraStream,
         setCameraStatus,
         setCameras,
@@ -20,6 +19,7 @@ export const permissionManager = () => {
             result.onchange = () => {
                 setCameraPermissionStatus(result.state);
                 if (result.state !== "granted") {
+                    const { cameraStream } = cameraStore.getState();
                     cameraStream?.getVideoTracks().forEach((track) => track.stop());
                     setCameras([]);
                     setCameraStream(null);
