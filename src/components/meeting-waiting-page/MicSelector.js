@@ -1,42 +1,44 @@
-'use client';
+"use client";
+
 
 import React from 'react';
-import { FiCamera } from 'react-icons/fi';
 
+import { FiMic } from "react-icons/fi";
 import { IoIosArrowDown } from "react-icons/io";
 
-export default function CameraSelector({ 
-    selectorUniqueName,
-    cameras,
-    selectedCameraId,
-    onSelect,
-    cameraPermissionStatus }) {
 
-    if (cameraPermissionStatus !== "granted") return (
+export default function MicSelector({
+    selectorUniqueName,
+    mics,
+    selectedMicId,
+    onSelect,
+    micPermissionStatus }) {
+
+    if (micPermissionStatus !== "granted") return (
         <div className='flex items-center gap-2 w-40 bg-gray-500/40 text-white/40 text-[0.7rem] 
-                        rounded-[0.4rem] px-2 py-[0.35rem] cursor-not-allowed'
+                            rounded-[0.4rem] px-2 py-[0.35rem] cursor-not-allowed'
         >
-            <FiCamera />
+            <FiMic />
             <span>Permission Needed</span>
         </div>
     );
 
-    if (cameras.length <= 1) return null;
+    if (mics.length <= 0) return null;
 
-    const selectedCamera = cameras.find((c) => c.deviceId === selectedCameraId);
+    const selectedMic = mics.find((m) => m.deviceId === selectedMicId);
 
     return (
         <div className='relative'>
             <button
-                popoverTarget={`${selectorUniqueName}-meeting-waiting-room-camera-options-popover`}
-                style={{ anchorName: `--${selectorUniqueName}-anchor-for-camera-select-dropdown` }}
+                popoverTarget={`${selectorUniqueName}-meeting-waiting-room-mic-options-popover`}
+                style={{ anchorName: `--${selectorUniqueName}-anchor-for-mic-select-dropdown` }}
                 className='camera-selector-trigger flex items-center justify-between gap-2 w-40 bg-gray-500/40 text-white text-[0.7rem] 
-                            rounded-[0.4rem] px-2 py-[0.35rem] cursor-pointer'
+                                rounded-[0.4rem] px-2 py-[0.35rem] cursor-pointer'
             >
                 <div className='flex items-center gap-2'>
-                    <FiCamera />
+                    <FiMic />
                     <span className='truncate text-gray-200 max-w-24'>
-                        {selectedCamera?.label || "camera"}
+                        {selectedMic?.label || "camera"}
                     </span>
                 </div>
 
@@ -46,10 +48,10 @@ export default function CameraSelector({
             </button>
 
             <div
-                id={`${selectorUniqueName}-meeting-waiting-room-camera-options-popover`}
+                id={`${selectorUniqueName}-meeting-waiting-room-mic-options-popover`}
                 popover='auto'
                 style={{
-                    positionAnchor: `--${selectorUniqueName}-anchor-for-camera-select-dropdown`,
+                    positionAnchor: `--${selectorUniqueName}-anchor-for-mic-select-dropdown`,
                     position: "absolute",
                     top: "anchor(bottom)",
                     left: "anchor(left)",
@@ -60,15 +62,15 @@ export default function CameraSelector({
             >
                 <div className='flex flex-col gap-1'>
                     {
-                        cameras.map((camera, index) => (
+                        mics.map((mic, index) => (
                             <button
-                                key={`meeting-waiting-room-camera-popover-option-camera-id-${camera.deviceId}-option-number-${index}`}
-                                onClick={camera.deviceId === selectedCameraId ? null : () => onSelect(camera.deviceId)}
+                                key={`meeting-waiting-room-mic-popover-option-mic-id-${mic.deviceId}-option-number-${index}`}
+                                onClick={mic.deviceId === selectedMicId ? null : () => onSelect(mic.deviceId)}
                                 className={`block w-full text-left px-2 py-1 rounded text-xs cursor-pointer
-                                        ${camera.deviceId === selectedCameraId ? "bg-[#3e6bff]" : "hover:bg-gray-700"}`}
+                                            ${mic.deviceId === selectedMicId ? "bg-[#3e6bff]" : "hover:bg-gray-700"}`}
                             >
-                                <span className='block max-w-24 truncate text-white'>
-                                    {camera.label || `Camera ${camera.deviceId.slice(0, 5)}`}
+                                <span className='block max-w-40 truncate text-white'>
+                                    {mic.label || `Mic ${mic.deviceId.slice(0, 5)}`}
                                 </span>
                             </button>
                         ))
@@ -78,3 +80,5 @@ export default function CameraSelector({
         </div>
     )
 }
+
+

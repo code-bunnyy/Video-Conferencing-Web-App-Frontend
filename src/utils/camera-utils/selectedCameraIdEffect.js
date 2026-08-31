@@ -1,12 +1,13 @@
 import cameraStore from "@/zustand-stores/cameraStore";
 import { getCameraStream } from "./getCameraStream";
-
+import { cameraStatusOptions } from "./cameraStatusOptions";
 
 export const selectedCameraIdEffect = (videoRef = null) => {
     async function handleDeviceChange() {
         const {
             setCameras,
             selectedCameraId,
+            cameraStatus,
         } = cameraStore.getState();
 
         try {
@@ -14,6 +15,9 @@ export const selectedCameraIdEffect = (videoRef = null) => {
             const videoInputs = devices.filter((d) => d.kind === "videoinput");
 
             setCameras(videoInputs);
+
+            // Nothing to reconcile if camera was never selected/on
+            if (!selectedCameraId || cameraStatus === cameraStatusOptions.off) return;
 
             const stillExists = videoInputs.find((d) => d.deviceId === selectedCameraId);
 

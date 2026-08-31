@@ -25,6 +25,8 @@ import { micStatusOptions } from '@/utils/mic-utils/micStatusOptions';
 
 import CameraOrAvatar from './CameraOrAvatar';
 import CameraSelector from './CameraSelector';
+import MicSelector from './MicSelector';
+import AudioVisualizer from './AudioVisualizer';
 
 
 export default function CameraPreviewSection({ className }) {
@@ -151,6 +153,14 @@ export default function CameraPreviewSection({ className }) {
 
             <div className='absolute inset-0 bg-linear-to-b from-transparent from-0% via-transparent via-75% to-black/70 to-100%'>
                 <div className='absolute top-0 flex items-center justify-end gap-2 w-full pt-3 pr-3'>
+                    <MicSelector 
+                        selectorUniqueName={"mic-selector-number-1"}
+                        mics={mics}
+                        selectedMicId={selectedMicId}
+                        onSelect={handleMicSelect}
+                        micPermissionStatus={micPermissionStatus}
+                    />
+                    
                     <CameraSelector
                         selectorUniqueName={"camera-selector-number-1"}
                         cameras={cameras}
@@ -160,13 +170,24 @@ export default function CameraPreviewSection({ className }) {
                     />
                 </div>
 
-                <div className='absolute bottom-0 flex items-center justify-between w-full px-0 py-3'>
-                    <div></div>
-                    <div className='flex items-center gap-3 px-3'>
+                <div className='absolute bottom-0 flex items-center justify-between w-full'>
+                    <div className='flex items-center gap-2 px-3'>
+                        <AudioVisualizer 
+                            micStatus={micStatus}
+                            micStream={micStream}
+                        />
+                        <div className='text-gray-400 text-[0.8rem]'>
+                            {userData.name}
+                        </div>
+                    </div>
+
+                    <div className='flex items-center gap-3 px-3 py-1'>
                         <InputOutputOptionCameraPreviewSection
                             iconScaleClass={"scale-[0.92]"}
+                            buttonEnabled={micStatus !== micStatusOptions.off}
                             EnabledIcon={FiMic}
                             DisabledIcon={FiMicOff}
+                            onClick={handleMicIconClick}
                         />
 
                         <InputOutputOptionCameraPreviewSection
