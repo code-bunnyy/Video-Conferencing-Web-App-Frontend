@@ -9,6 +9,7 @@ export default function Login() {
             onClick={() => signIn("google", {
                 callbackUrl:"/"
             })}
+            className='text-sm text-white bg-black px-3 py-2 m-2 rounded-[0.4rem] cursor-pointer'
         >
             Login with Google
         </button>
