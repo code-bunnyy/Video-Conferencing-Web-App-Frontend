@@ -196,11 +196,6 @@ export default function CameraPreviewSection({ className }) {
                             DisabledIcon={FiVideoOff}
                             onClick={handleCameraIconClick}
                         />
-
-                        <InputOutputOptionCameraPreviewSection
-                            EnabledIcon={IoVolumeHigh}
-                            DisabledIcon={IoVolumeMute}
-                        />
                     </div>
                 </div>
             </div>

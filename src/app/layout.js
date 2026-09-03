@@ -26,7 +26,7 @@ export default function RootLayout({ children }) {
       lang="en"
       className={`${inter.className} ${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="w-full bg-orange-200 min-h-full">{children}</body>
+      <body className="w-full min-h-full">{children}</body>
     </html>
   );
 }

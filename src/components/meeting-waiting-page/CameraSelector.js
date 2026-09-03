@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
-import { FiCamera } from 'react-icons/fi';
+import { FiCamera, FiCheck } from 'react-icons/fi';
 
 import { IoIosArrowDown } from "react-icons/io";
 
-export default function CameraSelector({ 
+export default function CameraSelector({
     selectorUniqueName,
     cameras,
     selectedCameraId,
@@ -56,18 +56,24 @@ export default function CameraSelector({
                     marginTop: "4px",
                     positionTryFallbacks: "flip-block",
                 }}
-                className='camera-selector-popover p-1 bg-gray-600 border border-white/10 rounded-lg mt-1 min-w-48'
+                className='camera-selector-popover bg-[#FBFBFB]
+                        py-1 rounded-lg mt-1 min-w-55 shadow-[0_8px_30px_rgba(0,0,0,0.35)]'
             >
-                <div className='flex flex-col gap-1'>
+                <div className='flex flex-col'>
                     {
                         cameras.map((camera, index) => (
                             <button
                                 key={`meeting-waiting-room-camera-popover-option-camera-id-${camera.deviceId}-option-number-${index}`}
                                 onClick={camera.deviceId === selectedCameraId ? null : () => onSelect(camera.deviceId)}
-                                className={`block w-full text-left px-2 py-1 rounded text-xs cursor-pointer
-                                        ${camera.deviceId === selectedCameraId ? "bg-[#3e6bff]" : "hover:bg-gray-700"}`}
+                                className={`flex items-center gap-2 w-full text-left py-2 px-2 text-xs cursor-pointer
+                                        ${camera.deviceId === selectedCameraId ?
+                                        "bg-blue-200 text-[#093C5D]" :
+                                        "hover:bg-gray-200 text-gray-500 hover:text-gray-800"}`}
                             >
-                                <span className='block max-w-24 truncate text-white'>
+                                <FiCheck
+                                    className={`text-[0.8rem] ${camera.deviceId === selectedCameraId ? "opacity-100" : "opacity-0"}`}
+                                />
+                                <span className='block max-w-45 truncate'>
                                     {camera.label || `Camera ${camera.deviceId.slice(0, 5)}`}
                                 </span>
                             </button>

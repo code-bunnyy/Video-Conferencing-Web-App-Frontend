@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-import { FiMic } from "react-icons/fi";
+import { FiMic, FiCheck } from "react-icons/fi";
 import { IoIosArrowDown } from "react-icons/io";
 
 
@@ -58,18 +58,25 @@ export default function MicSelector({
                     marginTop: "4px",
                     positionTryFallbacks: "flip-block",
                 }}
-                className='camera-selector-popover p-1 bg-gray-600 border border-white/10 rounded-lg mt-1 min-w-48'
+                className='camera-selector-popover bg-[#FBFBFB] py-1 
+                        rounded-lg mt-1 min-w-55 shadow-[0_8px_30px_rgba(0,0,0,0.35)]'
             >
-                <div className='flex flex-col gap-1'>
+                <div className='flex flex-col'>
                     {
                         mics.map((mic, index) => (
                             <button
                                 key={`meeting-waiting-room-mic-popover-option-mic-id-${mic.deviceId}-option-number-${index}`}
                                 onClick={mic.deviceId === selectedMicId ? null : () => onSelect(mic.deviceId)}
-                                className={`block w-full text-left px-2 py-1 rounded text-xs cursor-pointer
-                                            ${mic.deviceId === selectedMicId ? "bg-[#3e6bff]" : "hover:bg-gray-700"}`}
+                                className={`flex items-center gap-2 w-full text-left px-2 py-2 text-xs cursor-pointer
+                                            ${mic.deviceId === selectedMicId ?
+                                        "bg-blue-200 text-[#093C5D]" :
+                                        "hover:bg-gray-200 text-gray-500 hover:text-gray-800"}`}
                             >
-                                <span className='block max-w-40 truncate text-white'>
+                                <FiCheck
+                                    className={`text-[0.8rem] ${mic.deviceId === selectedMicId ? "opacity-100" : "opacity-0"}`}
+                                />
+
+                                <span className='block max-w-45 truncate '>
                                     {mic.label || `Mic ${mic.deviceId.slice(0, 5)}`}
                                 </span>
                             </button>
