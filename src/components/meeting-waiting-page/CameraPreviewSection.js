@@ -1,12 +1,11 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 
 import cameraStore from '@/zustand-stores/cameraStore';
 import micStore from '@/zustand-stores/micStore';
 
 import { FiMic, FiMicOff, FiVideo, FiVideoOff } from "react-icons/fi";
-import { IoVolumeHigh, IoVolumeMute } from "react-icons/io5";
 
 import InputOutputOptionCameraPreviewSection from './InputOutputOptionCameraPreviewSection';
 
