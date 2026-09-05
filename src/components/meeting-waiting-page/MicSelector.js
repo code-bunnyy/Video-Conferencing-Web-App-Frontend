@@ -58,10 +58,10 @@ export default function MicSelector({
                     marginTop: "4px",
                     positionTryFallbacks: "flip-block",
                 }}
-                className='camera-selector-popover bg-[#FBFBFB] py-1 
+                className='camera-selector-popover bg-[#2a2626] py-1 
                         rounded-lg mt-1 min-w-55 shadow-[0_8px_30px_rgba(0,0,0,0.35)]'
             >
-                <div className='flex flex-col'>
+                <div className='flex flex-col gap-0.5'>
                     {
                         mics.map((mic, index) => (
                             <button
@@ -69,11 +69,11 @@ export default function MicSelector({
                                 onClick={mic.deviceId === selectedMicId ? null : () => onSelect(mic.deviceId)}
                                 className={`flex items-center gap-2 w-full text-left px-2 py-2 text-xs cursor-pointer
                                             ${mic.deviceId === selectedMicId ?
-                                        "bg-blue-200 text-[#093C5D]" :
-                                        "hover:bg-gray-200 text-gray-500 hover:text-gray-800"}`}
+                                        "bg-white/80 text-[#051b29] font-semibold" :
+                                        "hover:bg-gray-700 text-gray-200 hover:text-gray-100"}`}
                             >
                                 <FiCheck
-                                    className={`text-[0.8rem] ${mic.deviceId === selectedMicId ? "opacity-100" : "opacity-0"}`}
+                                    className={`text-[0.8rem] stroke-3 ${mic.deviceId === selectedMicId ? "opacity-100" : "opacity-0"}`}
                                 />
 
                                 <span className='block max-w-45 truncate '>
